@@ -7,10 +7,12 @@ gem 'builder',                '~> 3.2'
 
 # Middleman
 gem 'middleman',              '~> 4.2'
+gem 'middleman-sprockets',    '~> 4.1'
 gem 'middleman-aria_current', '~> 0.1'
 gem 'middleman-autoprefixer', '~> 2.9'
 gem 'middleman-livereload',   '~> 3.4'
 gem 'middleman-minify-html',  '~> 3.4'
+gem 'middleman-inline_svg',   '~> 0.1.2'
 
 # Asset Pipeline Gems
 gem 'jquery-middleman',       '~> 3.1'
