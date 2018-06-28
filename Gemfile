@@ -2,8 +2,8 @@ source 'https://rubygems.org'
 ruby '2.4.3'
 
 # Bourbon
-gem 'bourbon',                '~> 5.0'
-gem 'builder',                '~> 3.2'
+gem 'bourbon', '~> 5.0'
+gem 'builder', '~> 3.2'
 
 # Middleman
 gem 'middleman',              '~> 4.2'
@@ -12,7 +12,7 @@ gem 'middleman-aria_current', '~> 0.1'
 gem 'middleman-autoprefixer', '~> 2.9'
 gem 'middleman-livereload',   '~> 3.4'
 gem 'middleman-minify-html',  '~> 3.4'
-gem 'middleman-inline_svg',   '~> 0.1.2'
+gem 'middleman-inline_svg',   '~> 0.1'
 
 # Asset Pipeline Gems
 gem 'jquery-middleman',       '~> 3.1'
