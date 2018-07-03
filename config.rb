@@ -11,6 +11,13 @@ activate :i18n, mount_at_root: :de
 # Aria Current
 activate :aria_current
 
+# Inline SVG
+activate :inline_svg do |config|
+  config.defaults = {
+    role: 'img'
+  }
+end
+
 # Sprockets
 require 'sassc'
 activate :sprockets do |c|
