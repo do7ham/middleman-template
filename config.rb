@@ -5,18 +5,11 @@ require 'uglifier'
 #  Activate and configure Extensions
 # --------------------------------------
 
-# Aria Current
-activate :aria_current
-
-# Inline SVG
-activate :inline_svg do |config|
-  config.defaults = {
-    role: 'img'
-  }
-end
-
 # i18n
 activate :i18n, mount_at_root: :de
+
+# Aria Current
+activate :aria_current
 
 # Sprockets
 require 'sassc'
@@ -32,17 +25,14 @@ if defined? RailsAssets
 end
 
 # --------------------------------------
-#  Layout-specific Configuration
+#  Piwik-specific Configuration
 # --------------------------------------
 
-# No Layout
-page '/*.txt',    layout: false
-page '/*.xml',    layout: false
-page '/*.json',   layout: false
-page '/404.html', layout: false, directory_index: false
-
-# Sass
-set :sass, line_comments: false, debug_info: false, style: :compressed
+activate :piwikmiddleman do |p|
+  p.domain = 'fahrschuleguth.de'
+  p.url    = 'piwik'
+  p.id     = 1
+end
 
 # --------------------------------------
 #  Helpers-specific Configuration
@@ -57,6 +47,23 @@ helpers do
   alias c component
   alias com component
 end
+
+# --------------------------------------
+#  Layout-specific Configuration
+# --------------------------------------
+
+# Default Layout
+config[:layout] = 'layouts/application'
+
+# No Layout
+page '/*.xml',     layout: false
+page '/*.txt',     layout: false
+page '/*.json',    layout: false
+page '/.htaccess', layout: false
+page '/404.html',  layout: false, directory_index: false
+
+# Sass
+set :sass, line_comments: false, debug_info: false, style: :compressed
 
 # --------------------------------------
 #  Server-specific Configuration
@@ -132,19 +139,45 @@ end
 # --------------------------------------
 
 configure :build do
+  # Host
+  config[:host] = "#{@app.data.site.url}"
   # Asset Hash
-  activate :asset_hash, ignore: [%r{(.*\.jpeg|.*\.jpg|.*\.png|.*\.svg)$}i]
+  activate :asset_hash, exts: %w(.css .js .svg .eot .ttf .woff .woff2), ignore: [/images/, /fonts/]
   # Minify CSS on Build
-  activate :minify_css, inline: true, compressor: YUI::CssCompressor.new
+  activate :minify_css, inline: true, ignore: ['/assets/fonts/*', '/assets/stylesheets/fonts/*.css'],
+    compressor: proc {
+      ::YUI::CssCompressor.new()
+    }
+  # Minify JS on Build
+  activate :minify_javascript, inline: true,
+    compressor: proc {
+      ::Uglifier.new(mangle: {toplevel: false}, compress: {unsafe: true}, output: {comments: :none}, harmony: true)
+    }
   # Minify HTML on Build
   activate :minify_html do |html|
-    html.remove_http_protocol    = false
-    html.remove_input_attributes = false
-    html.remove_quotes           = true
-    html.remove_intertag_spaces  = true
+    html.remove_multi_spaces        = true
+    html.remove_comments            = true
+    html.remove_intertag_spaces     = true
+    html.remove_quotes              = true
+    html.simple_doctype             = false
+    html.remove_script_attributes   = true
+    html.remove_style_attributes    = true
+    html.remove_link_attributes     = true
+    html.remove_form_attributes     = true
+    html.remove_input_attributes    = true
+    html.remove_javascript_protocol = true
+    html.remove_http_protocol       = false
+    html.remove_https_protocol      = true
+    html.preserve_line_breaks       = false
+    html.simple_boolean_attributes  = true
+    html.preserve_patterns          = nil
   end
-  # Minify JS on Build
-  activate :minify_javascript, inline: true, compressor: proc { ::Uglifier.new(mangle: false, harmony: true) }
+  # Sitemap
+  activate :seo_sitemap, default_host: "#{@app.data.site.url}"
+  # Robots
+  activate :robots,
+    rules: [{user_agent: '*', allow: %w(/)}],
+    sitemap: config[:host] + '/sitemap.xml'
   # Relative URLs
   activate :relative_assets
   config[:relative_links] = true
